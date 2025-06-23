@@ -1,0 +1,15 @@
+<nav class="backdrop-blur-lg text-white p-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <!-- Logo -->
+        <img src="/static/img/logo ori.png" alt="TiketIn" class="w-24">
+
+        <!-- Auth Buttons -->
+        <div>
+            {% if 'id_pengguna' in session %}
+            <a href="#" id="logout-link" class="text-white px-10 py-2 rounded-full border border-white hover:bg-white hover:text-purple-700">Logout</a>
+            {% else %}
+                
+            {% endif %}
+        </div>
+    </div>
+</nav>

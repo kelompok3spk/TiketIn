@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Statistik - TiketIn</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="flex">
+        <!-- Include Sidebar -->
+        {% include 'partial/sidebar-admin.html' %}
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <!-- Include Navbar -->
+            {% include 'partial/navbar-admin.html' %}
+
+            <div class="p-8">
+                <h2 class="text-2xl font-semibold mb-4">Laporan Statistik</h2>
+                <p class="mb-8">Pada halaman ini, Anda dapat melihat statistik terkait aktivitas pengguna dan pemesanan.</p>
+
+                <!-- Form untuk memilih filter waktu -->
+                <form action="{{ url_for('laporan_admin') }}" method="POST" class="mb-4">
+                    <label for="filter_waktu" class="mr-4">Filter Waktu:</label>
+                    <select name="filter_waktu" id="filter_waktu" class="border px-4 py-2 rounded">
+                        <option value="harian" {% if filter_waktu == 'harian' %}selected{% endif %}>Harian</option>
+                        <option value="mingguan" {% if filter_waktu == 'mingguan' %}selected{% endif %}>Mingguan</option>
+                        <option value="bulanan" {% if filter_waktu == 'bulanan' %}selected{% endif %}>Bulanan</option>
+                    </select>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded ml-4">Terapkan</button>
+                </form>
+
+                <!-- Statistik -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold">Jumlah Pemesanan</h3>
+                        <p class="text-2xl">{{ jumlah_pemesanan }}</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold">Pendapatan Total</h3>
+                        <p class="text-2xl">Rp. {{ total_pendapatan }}</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold">Pengguna Aktif</h3>
+                        <p class="text-2xl">{{ jumlah_pengguna_aktif }}</p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-lg font-semibold">Tiket Terjual</h3>
+                        <ul class="list-disc pl-6">
+                            {% for tiket in tiket_terjual %}
+                                <li>{{ tiket.nama_tempat }}: {{ tiket.tiket_terjual }} tiket</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Logout Alert -->
+    {% include 'partial/logout-alert.html' %}
+</body>
+</html>

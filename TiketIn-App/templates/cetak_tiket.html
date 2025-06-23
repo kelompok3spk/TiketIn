@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cetak Tiket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white font-sans">
+    <section class="max-w-lg mx-auto bg-white shadow-lg rounded-lg mt-8 p-6">
+        <div class="flex items-center mr-2 mb-4">
+            <!-- Back Icon -->
+            <a href="/" class="flex items-center text-purple-700 hover:text-purple-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
+            <h2 class="text-xl font-bold text-purple-700">Tiket Pemesanan</h2>
+        </div>
+
+        <!-- Informasi Pemesanan -->
+        <div class="bg-purple-100 p-4 rounded-lg mb-4 flex">
+            <!-- Gambar Tempat Wisata -->
+            <img src="{{ url_for('static', filename=pemesanan.image.split('static/')[1]) }}" alt="{{ pemesanan.nama_tempat }}" class="w-32 h-24 object-cover rounded-lg mr-4">
+            
+            <!-- Informasi Tiket -->
+            <div class="flex-grow">
+                <h3 class="text-lg font-bold text-purple-700">Tiket a.n. {{ pemesanan.nama_pengguna }}</h3>
+                <!-- Garis -->
+                <div class="border-b border-purple-700 w-full my-2"></div>
+
+                <p class="text-sm text-gray-600 mt-4">Lokasi:</p>
+                <p class="text-lg font-bold text-purple-700">{{ pemesanan.nama_tempat }}</p>
+                
+                <p class="text-sm text-gray-600 mt-2">Tanggal Pesan:</p>
+                <p class="text-lg font-bold text-purple-700">{{ pemesanan.tgl_pemesanan }}</p>
+                
+                <p class="text-sm text-gray-600 mt-2">Total Tiket:</p>
+                <p class="text-lg font-bold text-purple-700">{{ pemesanan.jumlah_orang }} Orang</p>
+                
+                <p class="text-sm text-gray-600 mt-2">Total Harga:</p>
+                <p class="text-lg font-bold text-purple-700">Rp {{ pemesanan.harga_per_orang * pemesanan.jumlah_orang + 5000 }}</p>
+            </div>
+        </div>
+
+        <!-- QR Code -->
+        <div class="text-center">
+            <p class="text-gray-600">Tiket ID: {{ pemesanan.id_pemesanan }}</p>
+            <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="mx-auto h-40 w-40">
+        </div>
+
+        <!-- Logo -->
+        <div class="text-center mt-4">
+            <img src="/static/img/logo ori.png" alt="TiketIn" class="w-32">
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran - TiketIn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-purple-50 font-sans">
+
+    <!-- Pembayaran Section -->
+    <section class="max-w-xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <!-- Back Button -->
+            <a href="/" class="text-purple-600 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0L2.293 10l4-4a1 1 0 111.414 1.414L5.414 9H16a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Kembali
+            </a>
+            <h2 class="text-xl font-bold">Invoice Tiket #{{ pemesanan.id_pemesanan }}</h2>
+        </div>
+
+        <!-- Ringkasan Pemesanan -->
+        <div class="bg-purple-100 p-4 rounded-lg mb-4 flex items-center">
+            <!-- Image of the Ticket -->
+            <img src="{{ url_for('static', filename=pemesanan.image.split('static/')[1]) }}" alt="{{ pemesanan.nama_tempat }}" class="w-32 h-24 object-cover rounded-lg mr-4">
+            
+            <!-- Ticket Info -->
+            <div class="flex-grow">
+                <h3 class="text-lg font-bold text-purple-700">Tiket {{ pemesanan.nama_tempat }}</h3>
+                <!-- Garis -->
+                <div class="border-b border-purple-300 my-2"></div>
+                
+                <!-- Jumlah Tiket dan Tanggal Pesanan -->
+                <div class="flex items-center justify-between mt-2">
+                    <div>
+                        <p class="text-md font-semibold text-purple-900">{{ pemesanan.jumlah_orang }} Tiket</p>
+                        <p class="text-sm text-gray-600 mt-2">Tanggal Pesanan</p>
+                        <p class="text-md font-semibold text-purple-900">{{ pemesanan.tgl_pemesanan }}</p>
+                    </div>
+                    
+                    <!-- Button for Adding More Tickets -->
+                    <button class="bg-white text-purple-700 border border-purple-700 rounded-full p-1 hover:bg-purple-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-bold mb-4 mt-10">Identitas Pemesan</h2>
+
+        <!-- Nama Pemesanan -->
+        <div class="mb-4 bg-purple-50 border border-gray-200 p-4 rounded-lg flex items-center">
+            <div class="mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  </svg>                  
+            </div>
+            <div>
+                <p class="text-sm font-bold">{{ pemesanan.nama_pengguna }}</p>
+                <p class="text-sm">{{ pemesanan.nomor_hp }}</p>
+                <p class="text-sm">{{ pemesanan.email_pengguna }}</p>
+            </div>
+        </div>
+
+        <!-- Pilihan Metode Pembayaran -->
+        <div class="mb-8">
+            <button id="openModalBtn" class="bg-purple-700 text-white w-full py-3 px-3 rounded-lg flex justify-between items-center">
+                <span>Pilih Pembayaran</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>                  
+            </button>
+        </div>
+
+        <!-- Total Harga -->
+        <div class="flex justify-between items-center mb-4">
+            <p class="text-lg font-bold text-gray-700">Total Harga</p>
+            <p class="text-2xl font-bold text-purple-700">Rp {{ pemesanan.harga_per_orang * pemesanan.jumlah_orang + 5000 }}</p>
+        </div>
+
+        <!-- QRIS Code (initially hidden) -->
+        <div id="qrisSection" class="hidden text-center mb-4">
+            <img id="qrisImage" src="/static/img/frame.png" alt="QRIS Code" class="mx-auto h-40 w-40">
+            <p class="text-gray-600 mt-2">Silakan scan kode QRIS untuk melakukan pembayaran</p>
+        </div>
+
+        <!-- Lanjutkan Pemesanan Button -->
+        <button id="lanjutkanBtn" class="bg-pink-500 text-white w-full py-3 rounded-lg hover:bg-pink-600 transition duration-300" disabled>Lanjutkan Pemesanan</button>
+
+    </section>
+
+    <!-- Modal Pilihan Pembayaran -->
+    <div id="paymentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden justify-center items-center">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+            <h2 class="text-xl font-bold mb-6">Metode Pembayaran</h2>
+            <form>
+                <!-- Opsi Metode Pembayaran -->
+                <div class="mb-6 space-y-4">
+                    <label class="flex items-center mb-2">
+                        <input type="radio" name="metode_pembayaran" value="BCA" class="mr-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/220px-Bank_Central_Asia.svg.png" alt="BCA" class="h-8">
+                    </label>
+                    <label class="flex items-center mb-2">
+                        <input type="radio" name="metode_pembayaran" value="Gopay" class="mr-2">
+                        <img src="https://antinomi.org/wp-content/uploads/2022/03/logo-gopay-vector.png" alt="Gopay" class="h-8">
+                    </label>
+                    <label class="flex items-center mb-2">
+                        <input type="radio" name="metode_pembayaran" value="ShopeePay" class="mr-2">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQosKrEF4IgxJd1474nuDbFWoclLNB59BERComLLRFeY_GcbCmHwUUKinQRkQgtmFDLkw&usqp=CAU" alt="ShopeePay" class="h-8">
+                    </label>
+                    <label class="flex items-center mb-2">
+                        <input type="radio" name="metode_pembayaran" value="OVO" class="mr-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Logo_ovo_purple.svg/200px-Logo_ovo_purple.svg.png" alt="OVO" class="h-8">
+                    </label>
+                    <label class="flex items-center mb-2">
+                        <input type="radio" name="metode_pembayaran" value="LinkAja" class="mr-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/LinkAja.svg/150px-LinkAja.svg.png" alt="LinkAja" class="h-8">
+                    </label>
+                    <label class="flex items-center mb-2">
+                        <input type="radio" name="metode_pembayaran" value="Mandiri" class="mr-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" alt="Mandiri" class="h-8">
+                    </label>
+                    <label class="flex items-center mb-2">
+                        <input type="radio" name="metode_pembayaran" value="Flip" class="mr-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo_flip.png/175px-Logo_flip.png" alt="Flip" class="h-8">
+                    </label>
+                    <label class="flex items-center mb-2">
+                        <input type="radio" name="metode_pembayaran" value="BRI" class="mr-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/BRI_2020.svg/220px-BRI_2020.svg.png" alt="BRI" class="h-8">
+                    </label>
+                </div>
+                <!-- Tombol Konfirmasi -->
+                <div class="text-center">
+                    <button id="confirmPaymentBtn" class="bg-purple-700 text-white w-full py-2 rounded-lg">Konfirmasi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mengambil elemen modal dan tombol
+        const openModalBtn = document.getElementById('openModalBtn');
+        const paymentModal = document.getElementById('paymentModal');
+        const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+        const qrisSection = document.getElementById('qrisSection');
+        const lanjutkanBtn = document.getElementById('lanjutkanBtn');
+
+        // Fungsi untuk membuka modal
+        openModalBtn.addEventListener('click', function() {
+            paymentModal.classList.remove('hidden');
+            paymentModal.classList.add('flex');
+        });
+
+        // Fungsi untuk menutup modal dan menampilkan QRIS
+        confirmPaymentBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            paymentModal.classList.add('hidden');
+            paymentModal.classList.remove('flex');
+            qrisSection.classList.remove('hidden'); // Menampilkan QRIS setelah metode pembayaran dipilih
+            lanjutkanBtn.disabled = false; // Mengaktifkan tombol lanjutkan setelah QRIS muncul
+        });
+
+        // Fungsi untuk menutup modal saat klik di luar modal
+        window.addEventListener('click', function(event) {
+            if (event.target === paymentModal) {
+                paymentModal.classList.add('hidden');
+                paymentModal.classList.remove('flex');
+            }
+        });
+
+        // Fungsi untuk mengarahkan ke halaman cetak tiket setelah QRIS muncul dan tombol diklik
+        lanjutkanBtn.addEventListener('click', function() {
+            // Mengarahkan ke halaman cetak tiket dengan membawa id pemesanan
+            window.location.href = `/cetak-tiket/{{ pemesanan.id_pemesanan }}`;
+        });
+    </script>
+</body>
+</html>

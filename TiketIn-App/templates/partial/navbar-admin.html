@@ -1,0 +1,20 @@
+<nav class="backdrop-blur-lg text-white px-8 py-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <!-- Page Title -->
+        <h1 class="text-2xl font-semibold text-purple-700">Admin Panel</h1>
+
+        <!-- Right Side -->
+        <div class="flex items-center space-x-4">
+            <!-- Avatar (using CDN avatar.png) -->
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Admin" class="w-8 h-8 rounded-full">
+            <!-- Account Name -->
+            <span class="ml-2 font-semibold text-purple-700">{{ session['nama_admin'] }}</span>
+            <!-- Logout Icon Button (Without Text - dark color icon) -->
+            <a href="#" id="logout-link" class="text-purple-700 hover:text-purple-900">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+                  </svg>                  
+            </a>
+        </div>
+    </div>
+</nav>

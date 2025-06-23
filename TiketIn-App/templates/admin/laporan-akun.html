@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Akun - TiketIn</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="flex">
+        <!-- Include Sidebar -->
+        {% include 'partial/sidebar-admin.html' %}
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <!-- Include Navbar -->
+            {% include 'partial/navbar-admin.html' %}
+
+            <div class="p-8">
+                <h2 class="text-2xl font-semibold mb-4">Kelola Akun Pengguna</h2>
+                <p class="mb-8">Pada halaman ini, Anda dapat melakukan blokir atau membuka blokir akun pengguna jika melanggar ketentuan yang berlaku.</p>
+
+                <!-- Table untuk menampilkan daftar pengguna -->
+                <table class="min-w-full table-auto border-collapse border border-gray-200">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-6 py-3 border-b border-gray-200">ID Pengguna</th>
+                            <th class="px-6 py-3 border-b border-gray-200">Nama Pengguna</th>
+                            <th class="px-6 py-3 border-b border-gray-200">Email</th>
+                            <th class="px-6 py-3 border-b border-gray-200">Status Blokir</th>
+                            <th class="px-6 py-3 border-b border-gray-200">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pengguna in pengguna_list %}
+                        <tr class="bg-white border-b border-gray-200">
+                            <td class="px-6 py-4">{{ pengguna.id_pengguna }}</td>
+                            <td class="px-6 py-4">{{ pengguna.nama_pengguna }}</td>
+                            <td class="px-6 py-4">{{ pengguna.email_pengguna }}</td>
+                            <td class="px-6 py-4">
+                                {% if pengguna.is_blocked %}
+                                    <span class="text-red-500">Akun Diblokir</span>
+                                {% else %}
+                                    <span class="text-green-500">Akun Aktif</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <!-- Form untuk memblokir/membuka blokir pengguna -->
+                                <form action="{{ url_for('update_blokir', id_pengguna=pengguna.id_pengguna) }}" method="POST">
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="is_blocked" class="form-checkbox h-5 w-5 text-red-600" 
+                                               {% if pengguna.is_blocked %} checked {% endif %}>
+                                        <span class="ml-2">Blokir</span>
+                                    </label>
+                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded ml-4">Simpan</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Logout Alert -->
+    {% include 'partial/logout-alert.html' %}
+</body>
+</html>

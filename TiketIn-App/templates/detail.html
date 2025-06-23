@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Wisata - TiketIn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Smooth Scroll -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-white font-sans">
+
+    <!-- Navbar -->
+    <div class="bg-purple-700">
+        {% include 'partial/navbar-logo-white.html' %}
+    </div>
+
+    <div class="max-w-6xl mx-auto items-center py-8">
+        <!-- Tombol Kembali (Icon) -->
+        <a href="/" class="flex items-center text-purple-700 hover:text-purple-500 mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Kembali
+        </a>
+
+        <!-- Gambar Utama -->
+        <img src="{{ url_for('static', filename=wisata.image.split('static/')[1]) }}" alt="{{ wisata.nama_tempat }}" class="w-full h-96 object-cover rounded-md">
+    </div>
+
+    <!-- Detail Section -->
+    <section class="max-w-6xl mx-auto">
+        <!-- Layout grid untuk informasi detail -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Kolom Kiri: Judul dan Lokasi -->
+            <div>
+                <h2 class="text-4xl font-bold mb-4 text-purple-900">{{ wisata.nama_tempat }}</h2>
+                <div class="flex items-start mb-2 space-x-2">
+                    <!-- Icon Lokasi -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                      </svg>                      
+                    <p class="text-gray-600">{{ wisata.lokasi_tempat }}</p>
+                </div>
+                <div class="flex items-start mb-4 space-x-2">
+                    <!-- Icon Jam Buka -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>                      
+                    <p class="text-gray-600">Buka hari {{ wisata.hari_buka }}, Jam {{ wisata.jam_buka }}</p>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Harga dan Tombol Pesan -->
+            <div class="text-right">
+                <p class="text-3xl font-bold text-purple-700 mb-6">Rp. {{ wisata.harga_per_orang }}</p>
+                <a href="#" class="bg-pink-500 text-white py-3 px-6 rounded-full shadow-lg hover:bg-pink-600 transition duration-300" id="openModalBtn">Pesan Sekarang</a>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="ticketModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden justify-center items-center">
+            <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-8 relative">
+                <h2 class="text-2xl font-bold mb-4 text-center">Pesan Tiket - {{ wisata.nama_tempat }}</h2>
+                <form action="/pesan-tiket" method="POST" id="ticketForm">
+                    
+                    <!-- Harga Per Orang -->
+                    <input type="hidden" name="harga_per_orang" id="hargaPerOrang" value="{{ wisata.harga_per_orang }}">
+                    
+                    <!-- ID Tempat Wisata -->
+                    <input type="hidden" name="id_tempat" value="{{ wisata.id_tempat }}">
+
+                    <!-- Nama Tempat Wisata -->
+                    <input type="hidden" name="nama_tempat" value="{{ wisata.nama_tempat }}">
+
+                    <!-- Lokasi Tempat Wisata -->
+                    <input type="hidden" name="lokasi_tempat" value="{{ wisata.lokasi_tempat }}">
+
+                    <!-- Nama Pemesan -->
+                    <div class="mb-4">
+                        <label for="nama_pengguna" class="block text-gray-700">Nama Pemesan:</label>
+                        <input type="text" id="nama_pengguna" name="nama_pengguna" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600" required>
+                    </div>
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <label for="email_pengguna" class="block text-gray-700">Email:</label>
+                        <input type="email" id="email_pengguna" name="email_pengguna" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600" required>
+                    </div>
+                    <!-- Tanggal Kunjungan -->
+                    <div class="mb-4">
+                        <label for="tgl_pemesanan" class="block text-gray-700">Tanggal Kunjungan:</label>
+                        <input type="date" id="tgl_pemesanan" name="tgl_pemesanan" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600" required>
+                    </div>
+                    <!-- Nomor HP -->
+                    <div class="mb-4">
+                        <label for="nomor_hp" class="block text-gray-700">Nomor HP:</label>
+                        <input type="text" id="nomor_hp" name="nomor_hp" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                    </div>
+                    <!-- Jumlah Orang dan Harga Tiket + Admin -->
+                    <div class="mb-4 flex justify-between items-center">
+                        <div>
+                            <label for="jumlah_orang" class="block text-gray-700">Jumlah Tiket:</label>
+                            <input type="number" id="jumlah_orang" name="jumlah_orang" value="1" min="1" class="w-16 px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                        </div>
+                        <div>
+                            <p>Harga Tiket: <strong>Rp {{ wisata.harga_per_orang }}</strong></p>
+                            <p>Biaya Admin: <strong>Rp 5000</strong></p>
+                        </div>
+                    </div>
+                    <!-- Total Harga (hanya ditampilkan, tidak disimpan langsung) -->
+                    <div class="mb-6 text-center">
+                        <p class="text-pink-500 text-lg">Total Harga: <strong id="totalHarga">Rp {{ wisata.harga_per_orang + 5000 }}</strong></p>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button type="submit" class="bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600">Lanjutkan Pemesanan</button>
+                    </div>
+                </form>
+                <!-- Close Button -->
+                <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Deskripsi di bawah -->
+        <div class="mt-8 bg-purple-50 p-6 rounded-lg mb-8">
+            <h3 class="text-2xl font-semibold mb-4 text-purple-900">Deskripsi</h3>
+            <p class="text-gray-700 leading-relaxed">{{ wisata.deskripsi }}</p>
+        </div>
+    </section>
+
+    <!-- Modal Tiket -->
+    <script>
+        // Ambil elemen yang dibutuhkan
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const ticketModal = document.getElementById('ticketModal');
+        const jumlahOrangInput = document.getElementById('jumlah_orang');
+        const totalHargaText = document.getElementById('totalHarga');
+        const hargaPerOrang = parseInt(document.getElementById('hargaPerOrang').value);
+        const biayaAdmin = 5000;
+    
+        // Fungsi untuk membuka modal
+        openModalBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            ticketModal.classList.remove('hidden');
+            ticketModal.classList.add('flex');
+        });
+    
+        // Fungsi untuk menutup modal
+        closeModalBtn.addEventListener('click', function() {
+            ticketModal.classList.add('hidden');
+            ticketModal.classList.remove('flex');
+        });
+    
+        // Event listener untuk menutup modal saat klik di luar modal
+        window.addEventListener('click', function(event) {
+            if (event.target === ticketModal) {
+                ticketModal.classList.add('hidden');
+                ticketModal.classList.remove('flex');
+            }
+        });
+    
+        // Fungsi untuk menghitung total harga
+        function updateTotalHarga() {
+            const jumlahOrang = parseInt(jumlahOrangInput.value);
+            const totalHarga = (jumlahOrang * hargaPerOrang) + biayaAdmin;
+            totalHargaText.textContent = `Rp ${totalHarga.toLocaleString()}`;
+        }
+    
+        // Event listener untuk menghitung total harga saat jumlah orang berubah
+        jumlahOrangInput.addEventListener('input', updateTotalHarga);
+    </script>
+
+</body>
+</html>

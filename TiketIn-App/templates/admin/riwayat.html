@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Pemesanan - TiketIn</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="flex">
+        <!-- Include Sidebar -->
+        {% include 'partial/sidebar-admin.html' %}
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <!-- Include Navbar -->
+            {% include 'partial/navbar-admin.html' %}
+
+            <div class="p-8">
+                <h2 class="text-2xl font-semibold mb-4">Riwayat Pemesanan</h2>
+                <p class="mb-8">Pada halaman ini, Anda dapat melihat riwayat pemesanan yang telah dilakukan oleh pengguna.</p>
+
+                <!-- Table for displaying pemesanan data -->
+                <table class="min-w-full table-auto border-collapse border border-gray-200">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-6 py-3 border-b border-gray-200">ID Pemesanan</th>
+                            <th class="px-6 py-3 border-b border-gray-200">Nama Pengguna</th>
+                            <th class="px-6 py-3 border-b border-gray-200">Tanggal Pemesanan</th>
+                            <th class="px-6 py-3 border-b border-gray-200">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pemesanan in pemesanan_list %}
+                        <tr class="bg-white border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onclick="openDetailModal('{{ pemesanan.id_pemesanan }}', '{{ pemesanan.nama_pengguna }}', '{{ pemesanan.tgl_pemesanan }}', '{{ pemesanan.status }}')">
+                            <td class="px-6 py-4">{{ pemesanan.id_pemesanan }}</td>
+                            <td class="px-6 py-4">{{ pemesanan.nama_pengguna }}</td>
+                            <td class="px-6 py-4">{{ pemesanan.tgl_pemesanan }}</td>
+                            <td class="px-6 py-4">{{ pemesanan.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk menampilkan detail pemesanan -->
+    <div id="detailModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded shadow-lg w-1/3 max-h-screen overflow-y-auto" id="modalContent" onclick="event.stopPropagation();">
+            <h2 class="text-xl mb-4">Detail Pemesanan</h2>
+            <div class="mb-4">
+                <label class="block font-semibold">ID Pemesanan:</label>
+                <p id="modalIdPemesanan"></p>
+            </div>
+            <div class="mb-4">
+                <label class="block font-semibold">Nama Pengguna:</label>
+                <p id="modalNamaPengguna"></p>
+            </div>
+            <div class="mb-4">
+                <label class="block font-semibold">Tanggal Pemesanan:</label>
+                <p id="modalTglPemesanan"></p>
+            </div>
+            <div class="mb-4">
+                <label class="block font-semibold">Status:</label>
+                <p id="modalStatus"></p>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" onclick="closeDetailModal()" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript untuk modal -->
+    <script>
+        function openDetailModal(id, nama, tanggal, status) {
+            document.getElementById('modalIdPemesanan').textContent = id;
+            document.getElementById('modalNamaPengguna').textContent = nama;
+            document.getElementById('modalTglPemesanan').textContent = tanggal;
+            document.getElementById('modalStatus').textContent = status;
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+    </script>
+
+    <!-- Include Logout Alert -->
+    {% include 'partial/logout-alert.html' %}
+</body>
+</html>

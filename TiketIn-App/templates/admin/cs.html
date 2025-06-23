@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support - TiketIn</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="flex">
+        <!-- Include Sidebar -->
+        {% include 'partial/sidebar-admin.html' %}
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <!-- Include Navbar -->
+            {% include 'partial/navbar-admin.html' %}
+
+            <div class="p-8">
+                <h2 class="text-2xl font-semibold mb-4">Customer Support - Live Chat</h2>
+
+                <!-- Live Chat Window -->
+                <div id="chat-window" class="bg-gray-100 p-4 rounded-lg h-96 overflow-y-auto">
+                    <div id="messages" class="space-y-2">
+                        <!-- Pesan akan muncul di sini -->
+                    </div>
+                </div>
+
+                <!-- Input Chat -->
+                <form id="chat-form" class="mt-4 flex">
+                    <input type="text" id="message-input" class="flex-grow border rounded px-4 py-2" placeholder="Ketik pesan di sini...">
+                    <button type="submit" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded">Kirim</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var socket = io();
+
+        // Room untuk admin
+        var room = "support";
+        var username = "Admin";
+
+        // Bergabung dengan room
+        socket.emit('join', {room: room, username: username});
+
+        // Terima pesan
+        socket.on('message', function(data) {
+            var messages = document.getElementById('messages');
+            var message = document.createElement('div');
+            message.classList.add('p-2', 'bg-white', 'rounded-lg', 'shadow-md');
+            message.innerHTML = data;
+            messages.appendChild(message);
+
+            // Scroll ke bawah otomatis
+            messages.scrollTop = messages.scrollHeight;
+        });
+
+        // Kirim pesan
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var input = document.getElementById('message-input');
+            var message = input.value;
+            if (message.trim() !== '') {
+                socket.emit('message', {room: room, username: username, message: message});
+                input.value = ''; // Kosongkan input setelah pesan dikirim
+            }
+        });
+    </script>
+
+    <!-- Include Logout Alert -->
+    {% include 'partial/logout-alert.html' %}
+</body>
+</html>
